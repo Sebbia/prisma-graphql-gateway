@@ -10,4 +10,6 @@ COPY ./package.json \
 RUN apt-get update && apt-get install -y nmap bash curl && \
     npm install
 
+EXPOSE 4000
+
 CMD npm start

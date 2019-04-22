@@ -12,6 +12,8 @@ version: '2'
 services:
     prisma:
         image: prisma-graphql-gateway
+        ports:
+            - 4000:4000
         environment:
             - ENDPOINTS=http://sampleservice1/graphql,http://sampleservice2/graphql
 ```
