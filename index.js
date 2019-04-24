@@ -8,12 +8,50 @@ import { setContext } from 'apollo-link-context';
 import { ApolloServer } from 'apollo-server';
 import fetch from 'node-fetch';
 
+if (!process.env.ENDPOINTS)
+  throw new Error("<8ed79eaf> ENDPOINTS env is not provided")
+
 const graphqlApis = process.env.ENDPOINTS.split(',')
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForEndpoint(endpoint) {
+
+  console.debug(`<515d0545> Wait for ${endpoint} endpoint....`)
+  while (true) {
+
+    try {
+
+      let response = await fetch(endpoint, {
+        method: "POST",
+        body: '{"query":"{ __schema { types { name } }}"}',
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      });
+
+      if (response.ok)
+        break;
+
+    } catch(e) {
+    }
+
+    await sleep(1000);
+  }
+
+  console.debug(`<576ed8a5> Endpoint is ok: ${endpoint}`)
+}
 
 // create executable schemas from remote GraphQL APIs
 const createRemoteExecutableSchemas = async () => {
   let schemas = [];
   for (const api of graphqlApis) {
+
+    await waitForEndpoint(api);
+
     const http =  new HttpLink({
       uri: api,
       fetch
