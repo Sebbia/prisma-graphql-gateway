@@ -112,6 +112,7 @@ const runServer = async () => {
   server.listen().then(({url}) => {
     console.log(`Running at ${url}`);
   });
+  server.httpServer.setTimeout(10 * 60 * 1000);
 };
 
 try {
