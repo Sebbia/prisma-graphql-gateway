@@ -130,7 +130,7 @@ const runServer = async () => {
   const server = new ApolloServer({
     schema,
     subscriptions: {
-      path: "/graphql"
+      path: "/"
     },
     context: ({ connection, payload, req }) => {
       // get the user token from the headers
