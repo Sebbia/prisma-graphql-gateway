@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
+  "repository": {
+    "url": "https://github.com/Sebbia/prisma-graphql-gateway.git"
+  },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
     "apollo-link-ws": "^1.0.7",
@@ -15,7 +18,7 @@
     "node-fetch": "^2.2.0"
   },
   "devDependencies": {
-    "esm": "^3.0.77",
+    "esm": "^3.1.0",
     "object-assign": "^4.1.1"
   },
   "scripts": {
