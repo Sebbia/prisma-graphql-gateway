@@ -7,6 +7,24 @@ import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { ApolloServer } from 'apollo-server';
 import fetch from 'node-fetch';
+import { getMainDefinition } from 'apollo-utilities';
+import WebSocket from 'ws';
+import { WebSocketLink } from 'apollo-link-ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
+
+const createWsLink = (gqlServerUrl) => {
+  const wsUri = gqlServerUrl.replace("http://", "ws://").replace("https://", "wss://").replace(/\/+$/, '') + "/ws"
+  console.log(`WS link: ${wsUri}`)
+  const wsClient = new SubscriptionClient(
+    wsUri,
+    {
+      reconnect: true // if connection is lost, retry
+    },
+    WebSocket,
+    []
+  );
+  return new WebSocketLink(wsClient);
+};
 
 if (!process.env.ENDPOINTS)
   throw new Error("<8ed79eaf> ENDPOINTS env is not provided")
@@ -36,7 +54,7 @@ async function waitForEndpoint(endpoint) {
       if (response.ok)
         break;
 
-    } catch(e) {
+    } catch (e) {
     }
 
     await sleep(1000);
@@ -52,16 +70,17 @@ const createRemoteExecutableSchemas = async () => {
 
     await waitForEndpoint(api);
 
-    const http =  new HttpLink({
+    const http = new HttpLink({
       uri: api,
       fetch
     });
-    const link = setContext(function(request, previousContext) {
-      console.log(previousContext);
-      console.log(typeof(previousContext));
+
+    const wsLink = createWsLink(api)
+
+    const link = setContext(function (request, previousContext) {
       let authKey;
-      if(previousContext.graphqlContext){
-          authKey = previousContext.graphqlContext.authKey;
+      if (previousContext.graphqlContext) {
+        authKey = previousContext.graphqlContext.authKey;
       }
       console.log("Child Authorization: " + authKey || 'None');
       if (authKey) {
@@ -75,8 +94,16 @@ const createRemoteExecutableSchemas = async () => {
           headers: {}
         }
       }
-    }).concat(http);
-    
+    })
+    .split(
+      ({ query }) => {
+        const { kind, operation } = getMainDefinition(query);
+        return kind === 'OperationDefinition' && operation === 'subscription';
+      },
+      wsLink,
+      http
+    );
+
     const remoteSchema = await introspectSchema(link);
     const remoteExecutableSchema = makeRemoteExecutableSchema({
       schema: remoteSchema,
@@ -100,16 +127,23 @@ const runServer = async () => {
   // start server with the new schema
   const server = new ApolloServer({
     schema,
+    subscriptions: {
+      path: "/graphql"
+    },
     context: ({ req }) => {
       // get the user token from the headers
-      const authKey = req.headers.authorization || '';
-      console.log("Parent Authorization: " + authKey);
-     
-      // add the token to the context
-      return { authKey };
+      if(req){
+        const authKey = req.headers.authorization || '';
+        console.log("Parent Authorization: " + authKey);
+  
+        // add the token to the context
+        return { authKey };
+      } else {
+        return {}
+      }
     }
   });
-  server.listen().then(({url}) => {
+  server.listen().then(({ url }) => {
     console.log(`Running at ${url}`);
   });
 };
