@@ -23,6 +23,10 @@ const createWsLink = (gqlServerUrl) => {
       connectionParams,
       reconnect: true,
     }, WebSocket, []);
+    client.onDisconnected = () => {
+      client.wsImpl.close()
+      client.close()
+    }
     return client.request(operation);
   };
 
