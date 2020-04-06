@@ -14,16 +14,19 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 const createWsLink = (gqlServerUrl) => {
   const wsUri = gqlServerUrl.replace("http://", "ws://").replace("https://", "wss://").replace(/\/+$/, '') + "/ws"
-  console.log(`WS link: ${wsUri}`)
-  const wsClient = new SubscriptionClient(
-    wsUri,
-    {
-      reconnect: true // if connection is lost, retry
-    },
-    WebSocket,
-    []
-  );
-  return new WebSocketLink(wsClient);
+  console.log(`WS link: ${wsUri}`);
+
+  const link = (operation, forward) => {
+    const context = operation.getContext();
+    const connectionParams = context.graphqlContext || {};
+    const client = new SubscriptionClient(wsUri, {
+      connectionParams,
+      reconnect: true,
+    }, WebSocket, []);
+    return client.request(operation);
+  };
+
+  return link
 };
 
 if (!process.env.ENDPOINTS)
@@ -41,7 +44,6 @@ async function waitForEndpoint(endpoint) {
   while (true) {
 
     try {
-
       let response = await fetch(endpoint, {
         method: "POST",
         body: '{"query":"{ __schema { types { name } }}"}',
@@ -80,7 +82,7 @@ const createRemoteExecutableSchemas = async () => {
     const link = setContext(function (request, previousContext) {
       let authKey;
       if (previousContext.graphqlContext) {
-        authKey = previousContext.graphqlContext.authKey;
+        authKey = previousContext.graphqlContext.Authorization;
       }
       console.log("Child Authorization: " + authKey || 'None');
       if (authKey) {
@@ -128,18 +130,20 @@ const runServer = async () => {
   const server = new ApolloServer({
     schema,
     subscriptions: {
-      path: "/graphql"
+      path: "/"
     },
-    context: ({ req }) => {
+    context: ({ connection, payload, req }) => {
       // get the user token from the headers
+      if(connection && connection.context && connection.context.Authorization){
+        return { Authorization: connection.context.Authorization } 
+      }
+
       if(req){
         const authKey = req.headers.authorization || '';
         console.log("Parent Authorization: " + authKey);
   
         // add the token to the context
-        return { authKey };
-      } else {
-        return {}
+        return { Authorization: authKey };
       }
     }
   });
