@@ -4,7 +4,15 @@ This container starts Apollo GraphQL server as gateway to other GraphQL endpoint
 
 ## Usage
 
-Use ENDPOINTS environment variable to define remote endpoints to services behind gateway.
+Env vars:
+* **ENDPOINTS** (string, uri`s split by coma) - to define remote endpoints to services behind gateway
+* **EXTERNAL_URI** (string) - to define service graphql endpoint, default `/`
+* **WS_ENABLE** (bool) - enable subscriptions in service, default `false`
+* **SENTRY_ENABLE** (bool) - enable Sentry, default `false`
+* **SENTRY_DSN** (string) - Sentry dsn url
+* **SENTRY_RELEASE** (string) - Sentry release version, default `dev`
+* **SENTRY_ENV** (string) - Sentry environment, default `debug`
+
 
 Sample `docker-compose.yml` can look like this:
 ```
