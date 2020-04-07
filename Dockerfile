@@ -1,14 +1,12 @@
-FROM node:8
+FROM node:12-alpine
 
 WORKDIR /server
 
-COPY ./package.json \
-    ./index.js \
-    ./*.json \
-    /server/
+COPY ./package.json /server/
 
-RUN apt-get update && apt-get install -y nmap bash curl && \
-    npm install
+RUN npm install
+
+COPY ./ /server/
 
 EXPOSE 4000
 
