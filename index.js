@@ -1,123 +1,37 @@
+import * as Sentry from '@sentry/node';
 import {
-  makeRemoteExecutableSchema,
-  introspectSchema,
   mergeSchemas
 } from 'graphql-tools';
-import { HttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { ApolloServer } from 'apollo-server';
-import fetch from 'node-fetch';
-import { getMainDefinition } from 'apollo-utilities';
-import WebSocket from 'ws';
-import { WebSocketLink } from 'apollo-link-ws';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import {
+  ApolloServer
+} from 'apollo-server';
+import {
+  createRemoteExecutableSchema
+} from './utils/remote-schema'
+import { apolloServerSentryPlugin } from './utils/sentry-middleware'
+import config from './config.js'
 
-const createWsLink = (gqlServerUrl) => {
-  const wsUri = gqlServerUrl.replace("http://", "ws://").replace("https://", "wss://").replace(/\/+$/, '') + "/ws"
-  console.log(`WS link: ${wsUri}`);
+console.info(`<7fd0acd3> Config for application: ${JSON.stringify(config)}`)
 
-  const link = (operation, forward) => {
-    const context = operation.getContext();
-    const connectionParams = context.graphqlContext || {};
-    const client = new SubscriptionClient(wsUri, {
-      connectionParams,
-      reconnect: true,
-    }, WebSocket, []);
-    return client.request(operation);
-  };
-
-  return link
+if(config.sentryConfig.enable){
+  Sentry.init({
+    environment: config.sentryConfig.environment,
+    release: config.sentryConfig.release,
+    dsn: config.sentryConfig.dsn,
+  });
 };
-
-if (!process.env.ENDPOINTS)
-  throw new Error("<8ed79eaf> ENDPOINTS env is not provided")
-
-const graphqlApis = process.env.ENDPOINTS.split(',')
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function waitForEndpoint(endpoint) {
-
-  console.debug(`<515d0545> Wait for ${endpoint} endpoint....`)
-  while (true) {
-
-    try {
-      let response = await fetch(endpoint, {
-        method: "POST",
-        body: '{"query":"{ __schema { types { name } }}"}',
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        }
-      });
-
-      if (response.ok)
-        break;
-
-    } catch (e) {
-    }
-
-    await sleep(1000);
-  }
-
-  console.debug(`<576ed8a5> Endpoint is ok: ${endpoint}`)
-}
 
 // create executable schemas from remote GraphQL APIs
-const createRemoteExecutableSchemas = async () => {
+const createRemoteExecutableSchemas = async (graphqlApis) => {
   let schemas = [];
   for (const api of graphqlApis) {
-
-    await waitForEndpoint(api);
-
-    const http = new HttpLink({
-      uri: api,
-      fetch
-    });
-
-    const wsLink = createWsLink(api)
-
-    const link = setContext(function (request, previousContext) {
-      let authKey;
-      if (previousContext.graphqlContext) {
-        authKey = previousContext.graphqlContext.Authorization;
-      }
-      console.log("Child Authorization: " + authKey || 'None');
-      if (authKey) {
-        return {
-          headers: {
-            'Authorization': `${String(authKey)}`,
-          }
-        }
-      } else {
-        return {
-          headers: {}
-        }
-      }
-    })
-    .split(
-      ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
-        return kind === 'OperationDefinition' && operation === 'subscription';
-      },
-      wsLink,
-      http
-    );
-
-    const remoteSchema = await introspectSchema(link);
-    const remoteExecutableSchema = makeRemoteExecutableSchema({
-      schema: remoteSchema,
-      link
-    });
-    schemas.push(remoteExecutableSchema);
+    schemas.push(createRemoteExecutableSchema(api, config.enableWS));
   }
-  return schemas;
+  return Promise.all(schemas);
 };
 
-const createNewSchema = async () => {
-  const schemas = await createRemoteExecutableSchemas();
+const createNewSchema = async (graphqlApis) => {
+  const schemas = await createRemoteExecutableSchemas(graphqlApis);
   return mergeSchemas({
     schemas
   });
@@ -125,29 +39,49 @@ const createNewSchema = async () => {
 
 const runServer = async () => {
   // Get newly merged schema
-  const schema = await createNewSchema();
+  const schema = await createNewSchema(config.graphqlApis);
   // start server with the new schema
-  const server = new ApolloServer({
+  var serverConfig = {
     schema,
-    subscriptions: {
-      path: "/"
+    playground: {
+      endpoint: config.externalEndpoint
     },
-    context: ({ connection, payload, req }) => {
+    context: ({
+      connection,
+      payload,
+      req
+    }) => {
       // get the user token from the headers
-      if(connection && connection.context && connection.context.Authorization){
-        return { Authorization: connection.context.Authorization } 
+      if (connection && connection.context && connection.context.Authorization) {
+        return {
+          Authorization: connection.context.Authorization
+        }
       }
 
-      if(req){
+      if (req) {
         const authKey = req.headers.authorization || '';
         console.log("Parent Authorization: " + authKey);
-  
+
         // add the token to the context
-        return { Authorization: authKey };
+        return {
+          Authorization: authKey
+        };
       }
     }
-  });
-  server.listen().then(({ url }) => {
+  }
+  if (config.enableWS) {
+    serverConfig.subscriptions = {
+      path: "/"
+    }
+  }
+  if(config.sentryConfig.enable){
+    serverConfig.plugins = [apolloServerSentryPlugin];
+  }
+  const server = new ApolloServer(serverConfig);
+
+  server.listen().then(({
+    url
+  }) => {
     console.log(`Running at ${url}`);
   });
   server.httpServer.setTimeout(10 * 60 * 1000);
