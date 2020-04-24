@@ -52,7 +52,7 @@ const createRemoteExecutableSchema = async (apiEndpoint, enableWS) => {
         if (previousContext.graphqlContext) {
             authKey = previousContext.graphqlContext.Authorization;
         };
-        console.log("Child Authorization: " + authKey || 'None');
+        console.log("<cdaf5d33> Child Authorization: " + authKey || 'None');
         if (authKey) {
             return {
                 headers: {

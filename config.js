@@ -1,4 +1,5 @@
 import { config  as cfg } from 'dotenv';
+import { toNullableBoolean } from './utils/toBool'
 
 // Read env vars from .env files in dev environment
 cfg()
@@ -7,9 +8,9 @@ if (!process.env.ENDPOINTS)
     throw new Error("<8ed79eaf> ENDPOINTS env is not provided")
 
 let endpoints = process.env.ENDPOINTS.split(',')
-let enableWS = process.env.WS_ENABLE || false
+let enableWS = toNullableBoolean(process.env.WS_ENABLE) || false
 
-let enableSentry = process.env.SENTRY_ENABLE || false
+let enableSentry = toNullableBoolean(process.env.SENTRY_ENABLE) || false
 if(enableSentry){
     if (!process.env.SENTRY_DSN)
         throw new Error("<28f7577e> SENTRY_DSN env is not provided")

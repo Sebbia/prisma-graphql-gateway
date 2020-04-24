@@ -11,7 +11,7 @@ import {
 import { apolloServerSentryPlugin } from './utils/sentry-middleware'
 import config from './config.js'
 
-console.info(`<7fd0acd3> Config for application: ${JSON.stringify(config)}`)
+console.info(`<7fd0acd3> Config for application:\n ${JSON.stringify(config, null, 2)}`)
 
 if(config.sentryConfig.enable){
   Sentry.init({
@@ -60,7 +60,7 @@ const runServer = async () => {
 
       if (req) {
         const authKey = req.headers.authorization || '';
-        console.log("Parent Authorization: " + authKey);
+        console.log("<110e2fef> Parent Authorization: " + authKey);
 
         // add the token to the context
         return {
@@ -82,7 +82,7 @@ const runServer = async () => {
   server.listen().then(({
     url
   }) => {
-    console.log(`Running at ${url}`);
+    console.log(`<6c9cda48> Running at ${url}`);
   });
   server.httpServer.setTimeout(10 * 60 * 1000);
 };
