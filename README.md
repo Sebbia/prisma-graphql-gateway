@@ -25,3 +25,8 @@ services:
         environment:
             - ENDPOINTS=http://sampleservice1/graphql,http://sampleservice2/graphql
 ```
+
+## Changelog:
+
+### 0.4.3
+Add `X-Forwarded-For` header to request

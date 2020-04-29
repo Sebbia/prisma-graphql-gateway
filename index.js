@@ -64,7 +64,8 @@ const runServer = async () => {
 
         // add the token to the context
         return {
-          Authorization: authKey
+          Authorization: authKey,
+          "X-Forwarded-For": req.ip
         };
       }
     }
