@@ -1,5 +1,6 @@
 import { config  as cfg } from 'dotenv';
 import { toNullableBoolean } from './utils/toBool'
+import { version } from './package.json'
 
 // Read env vars from .env files in dev environment
 cfg()
@@ -19,11 +20,12 @@ if(enableSentry){
 let config = {
     graphqlApis: endpoints,
     externalEndpoint: process.env.EXTERNAL_URI || "/",
+    enableQueryLogging: toNullableBoolean(process.env.QUERY_LOG_ENABLE) || false,
     enableWS: enableWS,
     sentryConfig: {
         enable: enableSentry,
         dsn: process.env.SENTRY_DSN,
-        release: process.env.SENTRY_RELEASE || "dev",
+        release: process.env.SENTRY_RELEASE || version,
         environment: process.env.SENTRY_ENV || "debug"
     }
 };
