@@ -30,8 +30,8 @@ services:
 ## Changelog:
 
 ### 0.5
-Add query logging
-From now, SENTRY_RELEASE by default is service version
+* Add query logging
+* From now, SENTRY_RELEASE by default is service version
 
 ### 0.4.3
 Add `X-Forwarded-For` header to request
