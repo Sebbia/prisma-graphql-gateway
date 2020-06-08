@@ -8,6 +8,9 @@ import {
 import {
   createRemoteExecutableSchema
 } from './utils/remote-schema'
+import {
+  loggingPlugin
+} from './utils/logging-plugin'
 import { apolloServerSentryPlugin } from './utils/sentry-middleware'
 import config from './config.js'
 
@@ -60,7 +63,6 @@ const runServer = async () => {
 
       if (req) {
         const authKey = req.headers.authorization || '';
-        console.log("<110e2fef> Parent Authorization: " + authKey);
 
         // add the token to the context
         return {
@@ -78,6 +80,11 @@ const runServer = async () => {
   if(config.sentryConfig.enable){
     serverConfig.plugins = [apolloServerSentryPlugin];
   }
+
+  if(config.enableQueryLogging){
+    serverConfig.plugins = [loggingPlugin];
+  }
+
   const server = new ApolloServer(serverConfig);
 
   server.listen().then(({
