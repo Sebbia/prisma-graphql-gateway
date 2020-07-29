@@ -1,10 +1,10 @@
 class ScopeIdGenerator {
     lastId = "";
     counter = 0;
-    
+
     /**
      * Internal only
-     * @param {Date} date 
+     * @param {Date} date
      * @returns {String}
      */
     _formatDate(date) {
@@ -16,7 +16,7 @@ class ScopeIdGenerator {
      */
     generateId() {
         let id = this._formatDate(new Date());
-        if(id != this.lastId){
+        if (id != this.lastId) {
             this.counter = 0;
             this.lastId = id
         }
@@ -29,7 +29,7 @@ class ScopeIdGenerator {
 class Scope {
     static EMPTY = new Scope("", null)
 
-    constructor(id, description){
+    constructor(id, description) {
         this.id = id
         this.description = description
     }
@@ -41,18 +41,18 @@ class Scope {
 
 class ScopeService {
     /**
-     * @param {ScopeIdGenerator} scopeIdGenerator 
+     * @param {ScopeIdGenerator} scopeIdGenerator
      */
-    constructor(scopeIdGenerator){
+    constructor(scopeIdGenerator) {
         this.idGenerator = scopeIdGenerator
     }
 
     /**
      * Create new scope
-     * @param {String} description 
+     * @param {String} description
      * @returns {Scope}
      */
-    createScope(description){
+    createScope(description) {
         let id = this.idGenerator.generateId();
         return new Scope(id, description)
     }

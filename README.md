@@ -30,6 +30,9 @@ services:
 
 ## Changelog:
 
+### 0.7.0
+* Add Gelf logger
+
 ### 0.6.0
 * Add scope to every request to endpoints
 
