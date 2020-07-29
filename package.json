@@ -1,22 +1,22 @@
 {
   "name": "prisma-graphql-gateway",
-  "version": "0.5",
-  "description": "",
+  "version": "0.6.0",
+  "description": "Apollo GraphQL server as gateway to other GraphQL endpoints. It also starts Prisma GraphQL playground targeted to this gate",
   "main": "index.js",
   "repository": {
     "url": "https://github.com/Sebbia/prisma-graphql-gateway.git"
   },
   "dependencies": {
-    "@sentry/node": "^5.15.4",
-    "apollo-link": "^1.2.2",
-    "apollo-link-context": "^1.0.16",
-    "apollo-link-http": "^1.5.4",
-    "apollo-link-ws": "^1.0.7",
-    "apollo-server": "^2.0.5",
-    "dotenv": "^8.2.0",
-    "graphql": "^0.13.2",
-    "graphql-tools": "^3.1.1",
-    "node-fetch": "^2.2.0"
+    "@sentry/node": "5.15.4",
+    "apollo-link": "1.2.14",
+    "apollo-link-context": "1.0.20",
+    "apollo-link-http": "1.5.17",
+    "apollo-link-ws": "1.0.20",
+    "apollo-server": "2.16.1",
+    "dotenv": "8.2.0",
+    "graphql": "14.2.1",
+    "graphql-tools": "3.1.1",
+    "node-fetch": "2.2.0"
   },
   "devDependencies": {
     "esm": "^3.1.0",

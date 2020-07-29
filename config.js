@@ -27,7 +27,8 @@ let config = {
         dsn: process.env.SENTRY_DSN,
         release: process.env.SENTRY_RELEASE || version,
         environment: process.env.SENTRY_ENV || "debug"
-    }
+    },
+    scopeHeader: process.env.SCOPE_HEADER || "Operation-Scope"
 };
 
 export default config;

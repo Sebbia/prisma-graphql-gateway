@@ -29,7 +29,7 @@ async function waitForEndpoint(endpoint) {
                 break;
 
         } catch (e) {
-            console.info(`<54aff403> Try reconnect to ${endpoint}`)
+            console.warn(`<54aff403> Try reconnect to ${endpoint}`)
         }
 
         await sleep(1000);
@@ -41,59 +41,72 @@ async function waitForEndpoint(endpoint) {
 // create executable schemas from remote GraphQL APIs
 const createRemoteExecutableSchema = async (apiEndpoint, enableWS) => {
     await waitForEndpoint(apiEndpoint);
+    try {
+        const http = new HttpLink({
+            uri: apiEndpoint,
+            fetch
+        });
 
-    const http = new HttpLink({
-        uri: apiEndpoint,
-        fetch
-    });
-
-    const context = setContext(function (request, previousContext) {
-        let authKey;
-        if (previousContext.graphqlContext) {
-            authKey = previousContext.graphqlContext.Authorization;
-        };
-        if (authKey) {
-            return {
-                headers: {
-                    'Authorization': `${String(authKey)}`,
-                }
+        const context = setContext(function (request, previousContext) {
+            let authKey;
+            let scope;
+            let scopeHeader;
+            let originIp;
+            if (previousContext.graphqlContext) {
+                authKey = previousContext.graphqlContext.Authorization;
+                scope = previousContext.graphqlContext.Scope
+                scopeHeader = previousContext.graphqlContext.ScopeHeader
+                originIp = previousContext.graphqlContext.OriginIp
             }
+            let headers = {}
+            if (authKey) {
+                headers['Authorization'] = `${String(authKey)}`
+            }
+            if (originIp) {
+                headers ["X-Forwarded-For"] = originIp
+            }
+            if (scope && scopeHeader) {
+                headers[scopeHeader] = scope.id
+            }
+            console.debug(`<feb1be2a> ${scope} New request headers: ${JSON.stringify(headers)}`)
+            return {
+                headers: headers
+            }
+        });
+
+        let link;
+
+        if (enableWS) {
+            console.debug(`<744143de> WS Link for ${apiEndpoint} enabled`)
+            const wsLink = createWsLink(apiEndpoint)
+            link = context.split(
+                ({
+                    query
+                }) => {
+                    const {
+                        kind,
+                        operation
+                    } = getMainDefinition(query);
+                    return kind === 'OperationDefinition' && operation === 'subscription';
+                },
+                wsLink,
+                http
+            );
         } else {
-            return {
-                headers: {}
-            }
+            console.debug(`<908668e6> WS Link for ${apiEndpoint} disabled`)
+            link = context.concat(http)
         }
-    });
 
-    let link;
-
-    if (enableWS) {
-        console.debug(`<744143de> WS Link for ${apiEndpoint} enabled`)
-        const wsLink = createWsLink(apiEndpoint)
-        link = context.split(
-            ({
-                query
-            }) => {
-                const {
-                    kind,
-                    operation
-                } = getMainDefinition(query);
-                return kind === 'OperationDefinition' && operation === 'subscription';
-            },
-            wsLink,
-            http
-        );
-    } else {
-        console.debug(`<908668e6> WS Link for ${apiEndpoint} disabled`)
-        link = context.concat(http)
+        const remoteSchema = await introspectSchema(link);
+        const remoteExecutableSchema = makeRemoteExecutableSchema({
+            schema: remoteSchema,
+            link
+        });
+        return remoteExecutableSchema;
+    } catch (e) {
+        console.error(`<a35f5ac8> Failed while make remote executable schema for ${apiEndpoint}: ${e}`);
+        throw e;
     }
-
-    const remoteSchema = await introspectSchema(link);
-    const remoteExecutableSchema = makeRemoteExecutableSchema({
-        schema: remoteSchema,
-        link
-    });
-    return remoteExecutableSchema;
 };
 
 export {

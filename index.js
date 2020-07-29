@@ -13,10 +13,13 @@ import {
 } from './utils/logging-plugin'
 import { apolloServerSentryPlugin } from './utils/sentry-middleware'
 import config from './config.js'
+import { ScopeIdGenerator, ScopeService } from './utils/scope-tools';
 
 console.info(`<7fd0acd3> Config for application:\n ${JSON.stringify(config, null, 2)}`)
 
-if(config.sentryConfig.enable){
+const scopeService = new ScopeService(new ScopeIdGenerator())
+
+if (config.sentryConfig.enable) {
   Sentry.init({
     environment: config.sentryConfig.environment,
     release: config.sentryConfig.release,
@@ -54,22 +57,24 @@ const runServer = async () => {
       payload,
       req
     }) => {
+      let scope = scopeService.createScope("<e2b3ef70> Receive new request")
       // get the user token from the headers
+      let authKey = null;
       if (connection && connection.context && connection.context.Authorization) {
-        return {
-          Authorization: connection.context.Authorization
+        authKey = connection.context.Authorization
+      } else {
+        if (req) {
+          authKey = req.headers.authorization || '';
         }
       }
 
-      if (req) {
-        const authKey = req.headers.authorization || '';
-
-        // add the token to the context
-        return {
-          Authorization: authKey,
-          "X-Forwarded-For": req.ip
-        };
-      }
+      // add the token to the context
+      return {
+        Authorization: authKey,
+        OriginIp: req.ip,
+        ScopeHeader: config.scopeHeader,
+        Scope: scope
+      };
     }
   }
   if (config.enableWS) {
@@ -77,11 +82,11 @@ const runServer = async () => {
       path: "/"
     }
   }
-  if(config.sentryConfig.enable){
+  if (config.sentryConfig.enable) {
     serverConfig.plugins = [apolloServerSentryPlugin];
   }
 
-  if(config.enableQueryLogging){
+  if (config.enableQueryLogging) {
     serverConfig.plugins = [loggingPlugin];
   }
 

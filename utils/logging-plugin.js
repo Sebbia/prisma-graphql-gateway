@@ -2,10 +2,11 @@ const loggingPlugin = {
 
     // Fires whenever a GraphQL request is received from a client.
     requestDidStart(requestContext) {
+        let scope = requestContext.context.Scope
         console.log(
-            `${new Date().toISOString()}: <617d491b> Request received: \n` +
+            `${new Date().toISOString()}: <617d491b>  ${scope} Request received: \n` +
             `Auth: ${requestContext.context.Authorization} \n` +
-            `Origin IP: ${requestContext.context["X-Forwarded-For"]} \n` +
+            `Origin IP: ${requestContext.context.OriginIp} \n` +
             `Query: \n${requestContext.request.query}` +
             `Variables: ${JSON.stringify(requestContext.request.variables)}`
         );
