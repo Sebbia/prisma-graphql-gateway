@@ -13,6 +13,7 @@ Env vars:
 * **SENTRY_DSN** (string) - Sentry dsn url
 * **SENTRY_RELEASE** (string) - Sentry release version, default `0.5`
 * **SENTRY_ENV** (string) - Sentry environment, default `debug`
+* **SCOPE_HEADER** (string) - Request scope header, default `Operation-Scope`
 
 
 Sample `docker-compose.yml` can look like this:
@@ -28,6 +29,15 @@ services:
 ```
 
 ## Changelog:
+
+### 0.7.1
+* Replace a forgotten console.log to own logger
+
+### 0.7.0
+* Add Gelf logger
+
+### 0.6.0
+* Add scope to every request to endpoints
 
 ### 0.5
 * Add query logging
