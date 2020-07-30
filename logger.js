@@ -30,7 +30,14 @@ class LoggerFactory {
                 adapterOptions: {
                     host: gelfConfig.host,
                     port: gelfConfig.port
-                }
+                },
+                transform: [
+                    function (message) {
+                        message["service_name"] = gelfConfig.serviceName
+                        message["deploy_type"] = gelfConfig.deployType
+                        return message
+                    }
+                ]
             })
         }
     }

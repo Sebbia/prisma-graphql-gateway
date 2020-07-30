@@ -26,6 +26,9 @@ if (enableGelf) {
 
 let logLevel = parseLogLevel(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : undefined
 
+let serviceName = process.env.SERVICE_NAME || "prisma"
+let deployType = process.env.DEPLOY_TYPE || "dev"
+
 let config = {
     graphqlApis: endpoints,
     externalEndpoint: process.env.EXTERNAL_URI || "/",
@@ -39,11 +42,15 @@ let config = {
     },
     scopeHeader: process.env.SCOPE_HEADER || "Operation-Scope",
     logLevel: logLevel || LogLevel.INFO,
+    serviceName: serviceName,
+    deployType: deployType,
     gelfConfig: {
         enable: enableGelf,
         host: process.env.GELF_HOST,
         port: process.env.GELF_PORT || 12201,
-        protocol: process.env.GELF_PROTOCOL || "udp"
+        protocol: process.env.GELF_PROTOCOL || "udp",
+        serviceName: serviceName,
+        deployType: deployType
     }
 };
 
