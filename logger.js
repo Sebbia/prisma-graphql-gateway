@@ -25,7 +25,6 @@ class LoggerFactory {
         this.__level = level
         this.__gelfEnable = gelfConfig.enable
         if (this.__gelfEnable) {
-            console.log(`<256be526>`)
             log.setConfig({
                 adapterName: gelfConfig.protocol,
                 adapterOptions: {

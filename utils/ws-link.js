@@ -4,7 +4,7 @@ import {SubscriptionClient} from 'subscriptions-transport-ws';
 function wsLinkFactory(logger) {
     const createWsLink = (gqlServerUrl) => {
         const wsUri = gqlServerUrl.replace("http://", "ws://").replace("https://", "wss://").replace(/\/+$/, '') + "/ws"
-        console.log(`<d83d3314> WS link: ${wsUri}`);
+        logger.debug(`<d83d3314> WS link: ${wsUri}`);
 
         const link = (operation, forward) => {
             const context = operation.getContext();

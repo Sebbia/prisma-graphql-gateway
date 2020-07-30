@@ -30,6 +30,9 @@ services:
 
 ## Changelog:
 
+### 0.7.1
+* Replace a forgotten console.log to own logger
+
 ### 0.7.0
 * Add Gelf logger
 

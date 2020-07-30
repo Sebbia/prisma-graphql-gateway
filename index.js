@@ -95,5 +95,5 @@ const runServer = async () => {
 try {
     runServer();
 } catch (err) {
-    console.error(err);
+    mainLog.error(err);
 }

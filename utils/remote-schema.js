@@ -34,13 +34,13 @@ function getRemoteExecutableSchemaFactory(logger) {
                     break;
 
             } catch (e) {
-                console.warn(`<54aff403> Try reconnect to ${endpoint}`)
+                logger.warn(`<54aff403> Try reconnect to ${endpoint}`)
             }
 
             await sleep(1000);
         }
 
-        console.debug(`<576ed8a5> Endpoint is ok: ${endpoint}`)
+        logger.info(`<576ed8a5> Endpoint is ok: ${endpoint}`)
     }
 
     const createRemoteExecutableSchema = async (apiEndpoint, enableWS) => {
@@ -72,7 +72,7 @@ function getRemoteExecutableSchemaFactory(logger) {
                 if (scope && scopeHeader) {
                     headers[scopeHeader] = scope.id
                 }
-                console.debug(`<feb1be2a> ${scope} New request headers: ${JSON.stringify(headers)}`)
+                logger.debug(`<feb1be2a> ${scope} New request headers: ${JSON.stringify(headers)}`)
                 return {
                     headers: headers
                 }
@@ -92,7 +92,7 @@ function getRemoteExecutableSchemaFactory(logger) {
                     http
                 );
             } else {
-                console.debug(`<908668e6> WS Link for ${apiEndpoint} disabled`)
+                logger.debug(`<908668e6> WS Link for ${apiEndpoint} disabled`)
                 link = context.concat(http)
             }
 
@@ -103,7 +103,7 @@ function getRemoteExecutableSchemaFactory(logger) {
             });
             return remoteExecutableSchema;
         } catch (e) {
-            console.error(`<a35f5ac8> Failed while make remote executable schema for ${apiEndpoint}: ${e}`);
+            logger.error(`<a35f5ac8> Failed while make remote executable schema for ${apiEndpoint}: ${e}`);
             throw e;
         }
     };
