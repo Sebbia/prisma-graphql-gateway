@@ -14,6 +14,12 @@ Env vars:
 * **SENTRY_RELEASE** (string) - Sentry release version, default `0.5`
 * **SENTRY_ENV** (string) - Sentry environment, default `debug`
 * **SCOPE_HEADER** (string) - Request scope header, default `Operation-Scope`
+* **GELF_ENABLE** (bool) - enable GELF logger, default `false`
+* **GELF_HOST** (string) - GELF host, required if GELF enabled
+* **GELF_PORT** (int) - GELF port, default `12201`
+* **GELF_PROTOCOL** (string) - GELF protocol, possible values: [`udp`, `tcp`, `tcp-tls`], default `udp`
+* **DEPLOY_TYPE** (string) - Deploy type (only shown in Graylog), default `dev`
+* **SERVICE_NAME** (string) - Service name (only shown in Graylog), default `prisma`
 
 
 Sample `docker-compose.yml` can look like this:
@@ -29,6 +35,9 @@ services:
 ```
 
 ## Changelog:
+
+### 0.7.3
+* Send extra data to GELF in json string instead object
 
 ### 0.7.2
 * Add service name and deploy type to gelf logger
