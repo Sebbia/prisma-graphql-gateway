@@ -65,7 +65,7 @@ class Logger {
 
     __processExtra(extra) {
         return {
-            raw_data: extra
+            raw_data: JSON.stringify(extra)
         }
     }
 

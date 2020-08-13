@@ -8,6 +8,7 @@ function wsLinkFactory(logger) {
 
         const link = (operation, forward) => {
             const context = operation.getContext();
+            logger.debug(`<c329fbf7> WS Context: ${JSON.stringify(context)}`)
             const connectionParams = context.graphqlContext || {};
             const client = new SubscriptionClient(wsUri, {
                 connectionParams,
