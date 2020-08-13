@@ -65,7 +65,7 @@ const runServer = async () => {
             // add the token to the context
             return {
                 Authorization: authKey,
-                OriginIp: req.ip,
+                OriginIp: req ? req.ip : null,
                 ScopeHeader: config.scopeHeader,
                 Scope: scope
             };

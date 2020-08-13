@@ -20,6 +20,7 @@ Env vars:
 * **GELF_PROTOCOL** (string) - GELF protocol, possible values: [`udp`, `tcp`, `tcp-tls`], default `udp`
 * **DEPLOY_TYPE** (string) - Deploy type (only shown in Graylog), default `dev`
 * **SERVICE_NAME** (string) - Service name (only shown in Graylog), default `prisma`
+* **LOG_LEVEL** (string) - Service log level. Possible values: TRACE, DEBUG, INFO, WARN, ERROR. Default `INFO`
 
 
 Sample `docker-compose.yml` can look like this:
@@ -35,6 +36,10 @@ services:
 ```
 
 ## Changelog:
+
+### 0.7.4
+* Fix resolve origin ip from websocket
+* Add quick test script
 
 ### 0.7.3
 * Send extra data to GELF in json string instead object
