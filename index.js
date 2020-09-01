@@ -1,11 +1,11 @@
 import * as Sentry from '@sentry/node';
-import {mergeSchemas} from 'graphql-tools';
-import {ApolloServer} from 'apollo-server';
-import {getRemoteExecutableSchemaFactory} from './utils/remote-schema'
-import {getLoggingPlugin} from './utils/logging-plugin'
-import {apolloServerSentryPlugin} from './utils/sentry-middleware'
-import {ScopeIdGenerator, ScopeService} from './utils/scope-tools';
-import {config, defaultLoggerFactory} from "./config";
+import { mergeSchemas } from 'graphql-tools';
+import { ApolloServer } from 'apollo-server';
+import { getRemoteExecutableSchemaFactory } from './utils/remote-schema'
+import { getLoggingPlugin } from './utils/logging-plugin'
+import { apolloServerSentryPlugin } from './utils/sentry-middleware'
+import { ScopeIdGenerator, ScopeService } from './utils/scope-tools';
+import { config, defaultLoggerFactory } from "./config";
 
 const scopeService = new ScopeService(new ScopeIdGenerator())
 const mainLog = defaultLoggerFactory.getLogger("Main")
@@ -50,15 +50,19 @@ const runServer = async () => {
                 "schema.polling.enable": false
             }
         },
-        context: ({connection, payload, req}) => {
+        context: ({ connection, payload, req }) => {
             let scope = scopeService.createScope("<e2b3ef70> Receive new request")
+            mainLog.debug(`<feb1be2a> Old request connection: ${JSON.stringify(connection)}`)
             // get the user token from the headers
             let authKey = null;
+            let headers = {};
             if (connection && connection.context && connection.context.Authorization) {
                 authKey = connection.context.Authorization
             } else {
                 if (req) {
                     authKey = req.headers.authorization || '';
+                    headers = req.headers;
+                    mainLog.debug(`<feb1be2a> ${scope} Old request headers: ${JSON.stringify(req.headers)}`)
                 }
             }
 
@@ -67,7 +71,8 @@ const runServer = async () => {
                 Authorization: authKey,
                 OriginIp: req ? req.ip : null,
                 ScopeHeader: config.scopeHeader,
-                Scope: scope
+                Scope: scope,
+                AllHeaders: headers
             };
         }
     }
@@ -86,8 +91,8 @@ const runServer = async () => {
 
     const server = new ApolloServer(serverConfig);
 
-    server.listen().then(({url}) => {
-        mainLog.info(`<6c9cda48> Running at ${url}`, {url: url})
+    server.listen().then(({ url }) => {
+        mainLog.info(`<6c9cda48> Running at ${url}`, { url: url })
     });
     server.httpServer.setTimeout(10 * 60 * 1000);
 };

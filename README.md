@@ -37,6 +37,9 @@ services:
 
 ## Changelog:
 
+### 0.7.5
+* Send all request headers to backends
+
 ### 0.7.4
 * Fix resolve origin ip from websocket
 * Add quick test script
