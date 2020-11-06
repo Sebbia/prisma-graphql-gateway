@@ -56,13 +56,16 @@ function getRemoteExecutableSchemaFactory(logger) {
                 let scope;
                 let scopeHeader;
                 let originIp;
+                let headers = {};
                 if (previousContext.graphqlContext) {
                     authKey = previousContext.graphqlContext.Authorization;
                     scope = previousContext.graphqlContext.Scope
                     scopeHeader = previousContext.graphqlContext.ScopeHeader
                     originIp = previousContext.graphqlContext.OriginIp
+                    headers = previousContext.graphqlContext.AllHeaders ? previousContext.graphqlContext.AllHeaders : {}
                 }
-                let headers = {}
+                delete headers["host"];
+
                 if (authKey) {
                     headers['Authorization'] = `${String(authKey)}`
                 }
