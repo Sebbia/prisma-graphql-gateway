@@ -44,7 +44,7 @@ const runServer = async () => {
     // start server with the new schema
     let serverConfig = {
         schema,
-        playground: {
+        playground: config.enablePlayground && {
             endpoint: config.externalEndpoint,
             settings: {
                 "schema.polling.enable": false

@@ -8,6 +8,7 @@ Env vars:
 * **ENDPOINTS** (string, uri`s split by coma) - to define remote endpoints to services behind gateway
 * **EXTERNAL_URI** (string) - to define service graphql endpoint, default `/`
 * **WS_ENABLE** (bool) - enable subscriptions in services, default `false`
+* **PLAYGROUND_ENABLE** (bool) - enable GraphQL Playground in gateway, default `false`
 * **QUERY_LOG_ENABLE** (bool) - enable query log in service, default `false`
 * **SENTRY_ENABLE** (bool) - enable Sentry, default `false`
 * **SENTRY_DSN** (string) - Sentry dsn url
@@ -36,6 +37,9 @@ services:
 ```
 
 ## Changelog:
+
+### 0.7.6
+* Add `PLAYGROUND_ENABLE` env variable for purpose to turn off GraphQL Playground
 
 ### 0.7.5
 * Send all request headers to backends

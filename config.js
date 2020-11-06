@@ -32,6 +32,7 @@ let deployType = process.env.DEPLOY_TYPE || "dev"
 let config = {
     graphqlApis: endpoints,
     externalEndpoint: process.env.EXTERNAL_URI || "/",
+    enablePlayground: toNullableBoolean(process.env.PLAYGROUND_ENABLE) || false,
     enableQueryLogging: toNullableBoolean(process.env.QUERY_LOG_ENABLE) || false,
     enableWS: enableWS,
     sentryConfig: {
