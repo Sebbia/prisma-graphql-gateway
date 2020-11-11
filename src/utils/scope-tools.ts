@@ -28,11 +28,11 @@ class ScopeIdGenerator {
  * Request scope
  */
 class Scope {
-    static EMPTY = new Scope("", null)
+    static EMPTY = new Scope("")
     id: string;
-    description: string | null
+    description?: string
 
-    constructor(id: string, description: string | null) {
+    constructor(id: string, description?: string) {
         this.id = id
         this.description = description
     }
@@ -55,7 +55,7 @@ class ScopeService {
     /**
      * Create new scope
      */
-    createScope(description: string | null) {
+    createScope(description: string) {
         let id = this.idGenerator.generateId();
         return new Scope(id, description)
     }

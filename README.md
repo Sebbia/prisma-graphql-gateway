@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.1
+* Fix scope type definition
+
 ### 0.8.0
 * Complete rewrite to Typescript
 
