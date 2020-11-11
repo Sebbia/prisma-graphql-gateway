@@ -1,8 +1,10 @@
+import { Logger } from "logger";
+import { ApolloServerPlugin, GraphQLRequestListener } from 'apollo-server-plugin-base';
+
 /**
- * @param {Logger} logger
- * @return {{requestDidStart(*): {parsingDidStart(*), validationDidStart(*)}}|{parsingDidStart(*), validationDidStart(*)}}
+ * Create logging plugin with specified logger
  */
-function getLoggingPlugin(logger) {
+function getLoggingPlugin(logger: Logger): ApolloServerPlugin {
     // Fires whenever a GraphQL request is received from a client.
     return {
         requestDidStart(requestContext) {
@@ -18,19 +20,18 @@ function getLoggingPlugin(logger) {
             return {
                 // Fires whenever Apollo Server will parse a GraphQL
                 // request to create its associated document AST.
-                parsingDidStart(requestContext) {
-                    // console.log('Parsing started!');
-                },
+                // parsingDidStart(requestContext) {
+                // console.log('Parsing started!');
+                // },
 
                 // Fires whenever Apollo Server will validate a
                 // request's document AST against your GraphQL schema.
-                validationDidStart(requestContext) {
-                    // console.log('Validation started!');
-                }
-
-            }
+                // validationDidStart(requestContext) {
+                // console.log('Validation started!');
+                // }
+            } as GraphQLRequestListener
         },
-    }
+    } as ApolloServerPlugin
 }
 
 export {

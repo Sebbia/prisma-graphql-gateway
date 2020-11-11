@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/node';
+import { ApolloServerPlugin } from 'apollo-server-plugin-base';
+// Use GraphQLRequestListener for more events
 
-const apolloServerSentryPlugin = {
+
+const apolloServerSentryPlugin: ApolloServerPlugin = {
   // For plugin definition see the docs: https://www.apollographql.com/docs/apollo-server/integrations/plugins/
   requestDidStart() {
     return {
@@ -11,7 +14,7 @@ const apolloServerSentryPlugin = {
           );
 
           let operation;
-          if(rc.operation && rc.operation.operation){
+          if (rc.operation && rc.operation.operation) {
             operation = rc.operation.operation || 'parse_error'
           } else {
             operation = 'parse_error'
@@ -19,7 +22,7 @@ const apolloServerSentryPlugin = {
 
           scope.setTags({
             graphql: operation,
-            graphqlName: rc.operationName || rc.request.operationName,
+            graphqlName: rc.operationName || rc.request.operationName || "unknown",
           });
 
           rc.errors.forEach((error) => {

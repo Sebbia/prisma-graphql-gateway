@@ -1,21 +1,19 @@
+/**
+ * Synchonous generate Scope Id
+ */
 class ScopeIdGenerator {
-    lastId = "";
-    counter = 0;
+    lastId: string = "";
+    counter: number = 0;
 
     /**
-     * Internal only
-     * @param {Date} date
-     * @returns {String}
+     * Format date to YYYYMMDDHHmmSS
      */
-    _formatDate(date) {
+    private formatDate(date: Date): string {
         return date.toISOString().replace(/\D/g, '')
     }
 
-    /**
-     * @returns {String}
-     */
-    generateId() {
-        let id = this._formatDate(new Date());
+    generateId(): string {
+        let id = this.formatDate(new Date());
         if (id != this.lastId) {
             this.counter = 0;
             this.lastId = id
@@ -26,33 +24,38 @@ class ScopeIdGenerator {
     }
 }
 
+/**
+ * Request scope
+ */
 class Scope {
     static EMPTY = new Scope("", null)
+    id: string;
+    description: string | null
 
-    constructor(id, description) {
+    constructor(id: string, description: string | null) {
         this.id = id
         this.description = description
     }
 
-    toString() {
+    toString(): string {
         return `<scope:${this.id}>`
     }
 }
 
+/**
+ * Centralized scope creation
+ */
 class ScopeService {
-    /**
-     * @param {ScopeIdGenerator} scopeIdGenerator
-     */
-    constructor(scopeIdGenerator) {
+    idGenerator: ScopeIdGenerator;
+
+    constructor(scopeIdGenerator: ScopeIdGenerator) {
         this.idGenerator = scopeIdGenerator
     }
 
     /**
      * Create new scope
-     * @param {String} description
-     * @returns {Scope}
      */
-    createScope(description) {
+    createScope(description: string | null) {
         let id = this.idGenerator.generateId();
         return new Scope(id, description)
     }

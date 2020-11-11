@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.0
+* Complete rewrite to Typescript
+
 ### 0.7.6
 * Add `PLAYGROUND_ENABLE` env variable for purpose to turn off GraphQL Playground
 

@@ -1,23 +1,23 @@
-import fetch from 'node-fetch';
-import {getMainDefinition} from 'apollo-utilities';
-import {introspectSchema, makeRemoteExecutableSchema} from 'graphql-tools';
-import {HttpLink} from 'apollo-link-http';
-import {setContext} from 'apollo-link-context';
-import {wsLinkFactory} from './ws-link'
+import fetch from 'cross-fetch';
+import { getMainDefinition } from 'apollo-utilities';
+import { introspectSchema, makeRemoteExecutableSchema } from 'graphql-tools';
+import { HttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { wsLinkFactory } from './ws-link';
+import { Logger } from 'logger';
 
-function sleep(ms) {
+function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
- * create executable schemas from remote GraphQL APIs
- * @param {Logger} logger
+ * Create executable schemas from remote GraphQL APIs
  * @return {createRemoteExecutableSchema}
  */
-function getRemoteExecutableSchemaFactory(logger) {
+function getRemoteExecutableSchemaFactory(logger: Logger) {
     let createWsLink = wsLinkFactory(logger)
 
-    async function waitForEndpoint(endpoint) {
+    async function waitForEndpoint(endpoint: string) {
         logger.debug(`<515d0545> Wait for ${endpoint} endpoint....`)
         while (true) {
             try {
@@ -43,7 +43,7 @@ function getRemoteExecutableSchemaFactory(logger) {
         logger.info(`<576ed8a5> Endpoint is ok: ${endpoint}`)
     }
 
-    const createRemoteExecutableSchema = async (apiEndpoint, enableWS) => {
+    const createRemoteExecutableSchema = async (apiEndpoint: string, enableWS: boolean) => {
         await waitForEndpoint(apiEndpoint);
         try {
             const http = new HttpLink({
@@ -51,12 +51,12 @@ function getRemoteExecutableSchemaFactory(logger) {
                 fetch
             });
 
-            const context = setContext(function (request, previousContext) {
+            const context = setContext(function (_, previousContext) {
                 let authKey;
                 let scope;
                 let scopeHeader;
                 let originIp;
-                let headers = {};
+                let headers: any = {};
                 if (previousContext.graphqlContext) {
                     authKey = previousContext.graphqlContext.Authorization;
                     scope = previousContext.graphqlContext.Scope
@@ -70,7 +70,7 @@ function getRemoteExecutableSchemaFactory(logger) {
                     headers['Authorization'] = `${String(authKey)}`
                 }
                 if (originIp) {
-                    headers ["X-Forwarded-For"] = originIp
+                    headers["X-Forwarded-For"] = originIp
                 }
                 if (scope && scopeHeader) {
                     headers[scopeHeader] = scope.id
@@ -87,9 +87,9 @@ function getRemoteExecutableSchemaFactory(logger) {
                 logger.debug(`<744143de> WS Link for ${apiEndpoint} enabled`)
                 const wsLink = createWsLink(apiEndpoint)
                 link = context.split(
-                    ({query}) => {
-                        const {kind, operation} = getMainDefinition(query);
-                        return kind === 'OperationDefinition' && operation === 'subscription';
+                    ({ query }) => {
+                        const def = getMainDefinition(query);
+                        return def.kind === 'OperationDefinition' && def.operation === 'subscription';
                     },
                     wsLink,
                     http
