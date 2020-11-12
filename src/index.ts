@@ -48,12 +48,7 @@ const runServer = async () => {
     let serverConfig: ApolloServerExpressConfig = {
         schema,
         playground: config.enablePlayground && {
-            endpoint: config.externalEndpoint,
-            settings: {
-                // @ts-ignore
-                // tslint: disable-next-line
-                "schema.polling.enable": false
-            }
+            endpoint: config.externalEndpoint
         },
         context: ({ connection, req }) => {
             let scope = scopeService.createScope("<e2b3ef70> Receive new request")

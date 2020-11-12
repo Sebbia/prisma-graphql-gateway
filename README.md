@@ -39,6 +39,10 @@ services:
 ## Changelog:
 
 ### 0.8.1
+* Fix run scripts
+* Fix saving settings in playground
+
+### 0.8.1
 * Fix scope type definition
 
 ### 0.8.0

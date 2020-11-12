@@ -1,6 +1,6 @@
 {
   "name": "prisma-graphql-gateway",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Apollo GraphQL server as gateway to other GraphQL endpoints. It also starts Prisma GraphQL playground targeted to this gate",
   "main": "./dist/index.js",
   "repository": {
@@ -29,9 +29,9 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "start": "node -r esm ./dist/src/index.js",
+    "start": "node -r esm ./dist/index.js",
     "version": "npm run build && git add -A .",
-    "dev": "tsc && node -r esm ./dist/src/index.js --unhandled-rejections=strict",
+    "dev": "tsc && node -r esm ./dist/index.js --unhandled-rejections=strict",
     "build": "tsc"
   },
   "author": "Anatoly Nechay-Gumen",
