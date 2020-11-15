@@ -1,7 +1,7 @@
-import {config as cfg} from 'dotenv';
-import {toNullableBoolean} from './utils/toBool'
-import {version} from './package.json'
-import {LoggerFactory, LogLevel, parseLogLevel} from "./logger";
+import { config as cfg } from 'dotenv';
+import { toNullableBoolean } from './utils/toBool';
+import { LoggerFactory, LogLevel, parseLogLevel } from "./logger";
+const version = require('../package.json');
 
 // Read env vars from .env files in dev environment
 cfg()
@@ -24,7 +24,7 @@ if (enableGelf) {
         throw new Error("<1e9ddfa> GELF_HOST env is not provided")
 }
 
-let logLevel = parseLogLevel(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : undefined
+let logLevel = parseLogLevel(process.env.LOG_LEVEL)
 
 let serviceName = process.env.SERVICE_NAME || "prisma"
 let deployType = process.env.DEPLOY_TYPE || "dev"
@@ -47,9 +47,9 @@ let config = {
     deployType: deployType,
     gelfConfig: {
         enable: enableGelf,
-        host: process.env.GELF_HOST,
-        port: process.env.GELF_PORT || 12201,
-        protocol: process.env.GELF_PROTOCOL || "udp",
+        host: process.env.GELF_HOST as string,
+        port: Number(process.env.GELF_PORT) || 12201,
+        protocol: (process.env.GELF_PROTOCOL || "udp") as 'tcp-tls' | 'tcp' | 'udp',
         serviceName: serviceName,
         deployType: deployType
     }
@@ -60,4 +60,4 @@ let defaultLoggerFactory = new LoggerFactory(config.logLevel, config.gelfConfig)
 export {
     config,
     defaultLoggerFactory
-} ;
+};

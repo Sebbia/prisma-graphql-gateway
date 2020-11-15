@@ -1,8 +1,8 @@
 const TRUTHY_VALUES = ['y', 'yes', 'true', 'enable']
 
-function toNullableBoolean(value) {
+function toNullableBoolean(value: string | undefined | null | number): boolean | null {
     if (value === undefined || value === null)
-        return value
+        return null
 
     let cleanedValue = value.toString().trim().toLowerCase();
 
@@ -12,7 +12,7 @@ function toNullableBoolean(value) {
 
         // Any number above zero is considered a truthy value
     } else if (!isNaN(Number(cleanedValue))) {
-        return cleanedValue > 0;
+        return Number(cleanedValue) > 0;
 
         // Any value not marked as a truthy value is automatically falsy
     } else {

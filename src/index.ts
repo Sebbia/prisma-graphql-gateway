@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node';
 import { mergeSchemas } from 'graphql-tools';
 import { ApolloServer } from 'apollo-server';
+import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { getRemoteExecutableSchemaFactory } from './utils/remote-schema'
 import { getLoggingPlugin } from './utils/logging-plugin'
 import { apolloServerSentryPlugin } from './utils/sentry-middleware'
@@ -23,34 +24,33 @@ if (config.sentryConfig.enable) {
 let createRemoteExecutableSchema = getRemoteExecutableSchemaFactory(defaultLoggerFactory.getLogger("RemoteSchema"))
 
 // create executable schemas from remote GraphQL APIs
-const createRemoteExecutableSchemas = async (graphqlApis) => {
+const createRemoteExecutableSchemas = async (graphqlApis: string[]) => {
     let schemas = [];
     for (const api of graphqlApis) {
         schemas.push(createRemoteExecutableSchema(api, config.enableWS));
     }
     return Promise.all(schemas);
 };
-
-const createNewSchema = async (graphqlApis) => {
+// @ts-ignore
+// tslint: disable-next-line
+async function createNewSchema(graphqlApis: string[]) {
     const schemas = await createRemoteExecutableSchemas(graphqlApis);
     return mergeSchemas({
         schemas
     });
-};
+}
+
 
 const runServer = async () => {
     // Get newly merged schema
     const schema = await createNewSchema(config.graphqlApis);
     // start server with the new schema
-    let serverConfig = {
+    let serverConfig: ApolloServerExpressConfig = {
         schema,
         playground: config.enablePlayground && {
-            endpoint: config.externalEndpoint,
-            settings: {
-                "schema.polling.enable": false
-            }
+            endpoint: config.externalEndpoint
         },
-        context: ({ connection, payload, req }) => {
+        context: ({ connection, req }) => {
             let scope = scopeService.createScope("<e2b3ef70> Receive new request")
             mainLog.debug(`<feb1be2a> Old request connection: ${JSON.stringify(connection)}`)
             // get the user token from the headers
@@ -94,7 +94,7 @@ const runServer = async () => {
     server.listen().then(({ url }) => {
         mainLog.info(`<6c9cda48> Running at ${url}`, { url: url })
     });
-    server.httpServer.setTimeout(10 * 60 * 1000);
+    // server.httpServer.setTimeout(10 * 60 * 1000);
 };
 
 try {

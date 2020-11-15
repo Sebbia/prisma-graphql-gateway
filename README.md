@@ -38,6 +38,16 @@ services:
 
 ## Changelog:
 
+### 0.8.1
+* Fix run scripts
+* Fix saving settings in playground
+
+### 0.8.1
+* Fix scope type definition
+
+### 0.8.0
+* Complete rewrite to Typescript
+
 ### 0.7.6
 * Add `PLAYGROUND_ENABLE` env variable for purpose to turn off GraphQL Playground
 
