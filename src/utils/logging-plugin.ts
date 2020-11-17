@@ -18,6 +18,15 @@ function getLoggingPlugin(logger: Logger): ApolloServerPlugin {
             );
 
             return {
+                willSendResponse(requestContext) {
+                    let scope = requestContext.context.Scope
+                    logger.debug(
+                        `${new Date().toISOString()}: <617d491b>  ${scope} Response received: \n` +
+                        `Data: ${JSON.stringify(requestContext.response?.data)} \n` +
+                        `Errors: ${JSON.stringify(requestContext.response?.errors)} \n`
+                    );
+
+                }
                 // Fires whenever Apollo Server will parse a GraphQL
                 // request to create its associated document AST.
                 // parsingDidStart(requestContext) {
@@ -30,7 +39,7 @@ function getLoggingPlugin(logger: Logger): ApolloServerPlugin {
                 // console.log('Validation started!');
                 // }
             } as GraphQLRequestListener
-        },
+        }
     } as ApolloServerPlugin
 }
 
