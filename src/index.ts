@@ -56,11 +56,11 @@ const runServer = async () => {
             // get the user token from the headers
             let authKey = null;
             let headers = {};
-            if (connection && connection.context && connection.context.Authorization) {
+            if (connection && connection.context && connection.context.Authorization && connection.context.Authorization.length > 0) {
                 authKey = connection.context.Authorization
             } else {
                 if (req) {
-                    authKey = req.headers.authorization || undefined;
+                    authKey = req.headers.authorization && req.headers.authorization.length > 0 || undefined;
                     headers = req.headers;
                     mainLog.debug(`<feb1be2a> ${scope} Old request headers: ${JSON.stringify(req.headers)}`)
                 }

@@ -38,8 +38,11 @@ services:
 
 ## Changelog:
 
+### 0.8.5
+* Check authorization header length
+
 ### 0.8.4
-* Fix authorization headers
+* Fix authorization headers by default
 
 ### 0.8.3
 * Add query response logging
