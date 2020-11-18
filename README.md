@@ -38,10 +38,15 @@ services:
 
 ## Changelog:
 
+### 0.8.4
+* Fix authorization headers
+
 ### 0.8.3
 * Add query response logging
+
 ### 0.8.2
 * Fix types
+
 ### 0.8.1
 * Fix run scripts
 * Fix saving settings in playground
