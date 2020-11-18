@@ -60,7 +60,7 @@ const runServer = async () => {
                 authKey = connection.context.Authorization
             } else {
                 if (req) {
-                    authKey = req.headers.authorization || '';
+                    authKey = req.headers.authorization || undefined;
                     headers = req.headers;
                     mainLog.debug(`<feb1be2a> ${scope} Old request headers: ${JSON.stringify(req.headers)}`)
                 }
