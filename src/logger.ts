@@ -1,18 +1,3 @@
-import * as gelfLog from "gelf-pro"
-
-declare module 'gelf-pro' {
-    function emergency(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function alert(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function critical(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function error(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function warning(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function warn(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function notice(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function info(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function debug(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-    function log(message: Message, extra?: MessageExtra, callback?: MessageCallback): void;
-}
-
 enum LogLevel {
     TRACE,
     DEBUG,
@@ -49,20 +34,7 @@ class LoggerFactory {
         this.level = level
         this.gelfEnable = gelfConfig.enable
         if (this.gelfEnable) {
-            gelfLog.setConfig({
-                adapterName: gelfConfig.protocol,
-                adapterOptions: {
-                    host: gelfConfig.host,
-                    port: gelfConfig.port
-                },
-                transform: [
-                    function (message) {
-                        message["service_name"] = gelfConfig.serviceName
-                        message["deploy_type"] = gelfConfig.deployType
-                        return message
-                    }
-                ]
-            })
+            console.warn("Sorry, Gelf logging is not working now. Watch current status in GitHub issues: https://github.com/Sebbia/prisma-graphql-gateway/issues/20")
         }
     }
 
@@ -85,11 +57,11 @@ class Logger {
         this.gelfEnable = gelfEnable
     }
 
-    private processExtra(extra: any) {
-        return {
-            raw_data: JSON.stringify(extra)
-        }
-    }
+    // private processExtra(extra: any) {
+    //     return {
+    //         raw_data: JSON.stringify(extra)
+    //     }
+    // }
 
     /**
      * Log in TRACE level to console only
@@ -106,8 +78,8 @@ class Logger {
     debug(message: string, extra?: any) {
         if (LogLevel.DEBUG <= this.level) {
             console.log(`${new Date().toISOString()} ${this.name} DEBUG ${message} | extra: ${JSON.stringify(extra)}`)
-            if (this.gelfEnable)
-                gelfLog.debug(message, this.processExtra(extra))
+            // if (this.gelfEnable)
+            //     gelfLog.debug(message, this.processExtra(extra))
         }
     }
 
@@ -119,8 +91,8 @@ class Logger {
     info(message: string, extra?: any) {
         if (LogLevel.INFO <= this.level) {
             console.log(`${new Date().toISOString()} ${this.name} INFO ${message} | extra: ${JSON.stringify(extra)}`)
-            if (this.gelfEnable)
-                gelfLog.info(message, this.processExtra(extra))
+            // if (this.gelfEnable)
+            //     gelfLog.info(message, this.processExtra(extra))
         }
     }
 
@@ -132,8 +104,8 @@ class Logger {
     warn(message: string, extra?: any) {
         if (LogLevel.WARN <= this.level) {
             console.log(`${new Date().toISOString()} ${this.name} WARN ${message} | extra: ${JSON.stringify(extra)}`)
-            if (this.gelfEnable)
-                gelfLog.warn(message, this.processExtra(extra))
+            // if (this.gelfEnable)
+            //     gelfLog.warn(message, this.processExtra(extra))
         }
     }
 
@@ -145,8 +117,8 @@ class Logger {
     error(message: string, extra?: any) {
         if (LogLevel.ERROR <= this.level) {
             console.log(`${new Date().toISOString()} ${this.name} ERROR ${message} | extra: ${JSON.stringify(extra)}`)
-            if (this.gelfEnable)
-                gelfLog.error(message, this.processExtra(extra))
+            // if (this.gelfEnable)
+            //     gelfLog.error(message, this.processExtra(extra))
         }
     }
 }

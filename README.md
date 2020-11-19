@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.6
+* Temporary remove Gelf logging. Issue for problem: https://github.com/Sebbia/prisma-graphql-gateway/issues/20
+
 ### 0.8.5
 * Check authorization header length
 
