@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.8
+* Fix auth header remove when is not empty
+
 ### 0.8.7
 * Fix Sentry version recognition
 * Fix auth header remove when is empty

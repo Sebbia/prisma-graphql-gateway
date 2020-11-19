@@ -1,6 +1,6 @@
 {
   "name": "prisma-graphql-gateway",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "Apollo GraphQL server as gateway to other GraphQL endpoints. It also starts Prisma GraphQL playground targeted to this gate",
   "main": "./dist/index.js",
   "repository": {
