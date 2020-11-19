@@ -68,6 +68,8 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
 
                 if (authKey) {
                     headers['Authorization'] = `${String(authKey)}`
+                } else {
+                    headers['Authorization'] = undefined
                 }
                 if (originIp) {
                     headers["X-Forwarded-For"] = originIp
