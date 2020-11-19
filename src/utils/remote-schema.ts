@@ -67,9 +67,11 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
                 delete headers["host"];
 
                 if (authKey) {
+                    delete headers['authorization']
                     headers['Authorization'] = `${String(authKey)}`
                 } else {
-                    headers['Authorization'] = undefined
+                    delete headers['Authorization']
+                    delete headers['authorization']
                 }
                 if (originIp) {
                     headers["X-Forwarded-For"] = originIp
@@ -77,7 +79,7 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
                 if (scope && scopeHeader) {
                     headers[scopeHeader] = scope.id
                 }
-                logger.debug(`<feb1be2a> ${scope} New request headers: ${JSON.stringify(headers)}`)
+                logger.debug(`<10774738> ${scope} New request headers: ${JSON.stringify(headers)}`)
                 return {
                     headers: headers
                 }

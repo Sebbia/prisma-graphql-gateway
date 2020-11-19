@@ -38,6 +38,10 @@ services:
 
 ## Changelog:
 
+### 0.8.7
+* Fix Sentry version recognition
+* Fix auth header remove when is empty
+
 ### 0.8.6
 * Temporary remove Gelf logging. Issue for problem: https://github.com/Sebbia/prisma-graphql-gateway/issues/20
 
