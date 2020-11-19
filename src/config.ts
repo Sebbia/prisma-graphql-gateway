@@ -1,7 +1,7 @@
 import { config as cfg } from 'dotenv';
 import { toNullableBoolean } from './utils/toBool';
 import { LoggerFactory, LogLevel, parseLogLevel } from "./logger";
-const version = require('../package.json');
+const { version } = require('../package.json');
 
 // Read env vars from .env files in dev environment
 cfg()
