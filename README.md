@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.9
+* Fix websocket GraphQL Subscriptions
+
 ### 0.8.8
 * Fix auth header remove when is not empty
 

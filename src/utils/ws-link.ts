@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 import { Logger } from 'logger';
 import { ApolloLink } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 function wsLinkFactory(logger: Logger) {
     const createWsLink = (gqlServerUrl: string) => {
@@ -12,14 +13,11 @@ function wsLinkFactory(logger: Logger) {
             const context = operation.getContext();
             logger.debug(`<c329fbf7> WS Context: ${JSON.stringify(context)}`)
             const connectionParams = context.graphqlContext || {};
-            const wsLink = new WebSocketLink({
-                uri: wsUri,
-                options: {
-                    connectionParams,
-                    reconnect: true,
-                },
-                webSocketImpl: WebSocket
-            });
+            const client = new SubscriptionClient(wsUri, {
+                connectionParams,
+                reconnect: true,
+            }, WebSocket, []);
+            const wsLink = new WebSocketLink(client);
             return wsLink.request(operation)
         });
 
