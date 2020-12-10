@@ -7,6 +7,7 @@ import { getLoggingPlugin } from './utils/logging-plugin'
 import { apolloServerSentryPlugin } from './utils/sentry-middleware'
 import { ScopeIdGenerator, ScopeService } from './utils/scope-tools';
 import { config, defaultLoggerFactory } from "./config";
+import { formatApolloErrors } from 'apollo-server-errors';
 
 const scopeService = new ScopeService(new ScopeIdGenerator())
 const mainLog = defaultLoggerFactory.getLogger("Main")
@@ -74,6 +75,31 @@ const runServer = async () => {
                 Scope: scope,
                 AllHeaders: headers
             };
+        },
+        formatError: (error) => {
+            mainLog.debug(`<8f11e079> Error: ${JSON.stringify(error)}`)
+            mainLog.debug(`<69ff2427> Original Error: ${JSON.stringify(error.originalError)}`)
+
+            //TODO: Refactor this to normal TypeScript
+            let errors = [] as any[];
+
+            if(!error.originalError || !(error.originalError as any).errors || (error.originalError as any).errors.length <= 0) {
+                return error;
+            }
+        
+            (error.originalError as any).errors.forEach((currentError: any) => {
+                if(!currentError) return;
+                let currentOriginal = currentError.originalError;
+        
+                const compiledErrors = formatApolloErrors(currentOriginal.errors || []);
+        
+                if(compiledErrors === null) {
+                    return;
+                }
+        
+                errors.push(...compiledErrors.filter(err => !!err));
+            });
+            return (errors.length > 1) ? errors : errors[0];
         }
     }
     if (config.enableWS) {

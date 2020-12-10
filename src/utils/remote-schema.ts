@@ -5,6 +5,7 @@ import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { wsLinkFactory } from './ws-link';
 import { Logger } from 'logger';
+import { onError } from 'apollo-link-error';
 
 function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -103,10 +104,16 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
                 link = context.concat(http)
             }
 
+            const errorLink = onError((error) => {
+                if (error.graphQLErrors) {
+                    logger.debug(`<b8366ae1> Remote Server Errors: ${JSON.stringify(error.graphQLErrors)}`)
+                }
+            })
+
             const remoteSchema = await introspectSchema(link);
             const remoteExecutableSchema = makeRemoteExecutableSchema({
                 schema: remoteSchema,
-                link
+                link: errorLink.concat(link)
             });
             return remoteExecutableSchema;
         } catch (e) {
