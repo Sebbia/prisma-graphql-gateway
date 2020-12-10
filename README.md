@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.10
+* Add remote schema error handler
+
 ### 0.8.9
 * Fix websocket GraphQL Subscriptions
 
