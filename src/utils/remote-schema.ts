@@ -19,8 +19,8 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
     let createWsLink = wsLinkFactory(logger)
 
     async function waitForEndpoint(endpoint: string) {
-        logger.debug(`<515d0545> Wait for ${endpoint} endpoint....`)
         while (true) {
+            logger.debug(`<515d0545> Wait for ${endpoint} endpoint....`)
             try {
                 let response = await fetch(endpoint, {
                     method: "POST",
