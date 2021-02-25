@@ -104,7 +104,11 @@ const runServer = async () => {
     }
     if (config.enableWS) {
         serverConfig.subscriptions = {
-            path: "/"
+            path: "/",
+            keepAlive: 0,
+            onDisconnect: (__, _) => {
+                console.log(`<251a3131> WS Disconnect client from server`)
+            }
         }
     }
     if (config.sentryConfig.enable) {

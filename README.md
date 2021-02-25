@@ -38,6 +38,9 @@ services:
 
 ## Changelog:
 
+### 0.8.11
+* Fix: Subscription WS connection to server have not been closed after client disconnect
+
 ### 0.8.10
 * Add remote schema error handler
 

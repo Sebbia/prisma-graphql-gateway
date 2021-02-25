@@ -15,9 +15,11 @@ function wsLinkFactory(logger: Logger) {
             const connectionParams = context.graphqlContext || {};
             const client = new SubscriptionClient(wsUri, {
                 connectionParams,
-                reconnect: true,
+                reconnect: false,
+                inactivityTimeout: 20
             }, WebSocket, []);
             const wsLink = new WebSocketLink(client);
+            context.wsClient = client;
             return wsLink.request(operation)
         });
 
