@@ -22,6 +22,7 @@ Env vars:
 * **DEPLOY_TYPE** (string) - Deploy type (only shown in Graylog), default `dev`
 * **SERVICE_NAME** (string) - Service name (only shown in Graylog), default `prisma`
 * **LOG_LEVEL** (string) - Service log level. Possible values: TRACE, DEBUG, INFO, WARN, ERROR. Default `INFO`
+* **WORKERS** (int) - Number of cluster workers. Default: by number of CPU`s
 
 
 Sample `docker-compose.yml` can look like this:
@@ -37,6 +38,9 @@ services:
 ```
 
 ## Changelog:
+
+### 0.9.0
+* Cluster mode.
 
 ### 0.8.11
 * Fix: Subscription WS connection to server have not been closed after client disconnect

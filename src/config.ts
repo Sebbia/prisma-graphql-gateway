@@ -2,6 +2,7 @@ import { config as cfg } from 'dotenv';
 import { toNullableBoolean } from './utils/toBool';
 import { LoggerFactory, LogLevel, parseLogLevel } from "./logger";
 const { version } = require('../package.json');
+import os from "os";
 
 // Read env vars from .env files in dev environment
 cfg()
@@ -28,9 +29,12 @@ let logLevel = parseLogLevel(process.env.LOG_LEVEL)
 
 let serviceName = process.env.SERVICE_NAME || "prisma"
 let deployType = process.env.DEPLOY_TYPE || "dev"
+const workers = process.env.WORKERS || os.cpus().length; 
 
 let config = {
     graphqlApis: endpoints,
+    mode: endpoints,
+    workers: Number(workers),
     externalEndpoint: process.env.EXTERNAL_URI || "/",
     enablePlayground: toNullableBoolean(process.env.PLAYGROUND_ENABLE) || false,
     enableQueryLogging: toNullableBoolean(process.env.QUERY_LOG_ENABLE) || false,

@@ -1,3 +1,5 @@
+import process from 'process'
+
 enum LogLevel {
     TRACE,
     DEBUG,
@@ -52,7 +54,7 @@ class Logger {
     gelfEnable: boolean;
 
     constructor(name: string, level: LogLevel, gelfEnable: boolean) {
-        this.name = name
+        this.name = `${process.pid.toString()} - ${name}`
         this.level = level
         this.gelfEnable = gelfEnable
     }
