@@ -66,6 +66,8 @@ function getRemoteExecutableSchemaFactory(logger: Logger) {
                     headers = previousContext.graphqlContext.AllHeaders ? previousContext.graphqlContext.AllHeaders : {}
                 }
                 delete headers["host"];
+                delete headers["origin"];
+                delete headers["Origin"];
 
                 if (authKey) {
                     delete headers['authorization']

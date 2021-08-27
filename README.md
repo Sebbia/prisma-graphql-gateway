@@ -39,6 +39,9 @@ services:
 
 ## Changelog:
 
+### 0.9.1
+* Filter origin headers
+
 ### 0.9.0
 * Cluster mode.
 
