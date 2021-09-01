@@ -188,5 +188,5 @@ const runCluster = async () => {
 try {
   runCluster();
 } catch (err) {
-  mainLog.error(err);
+  mainLog.error(`${err}`);
 }
